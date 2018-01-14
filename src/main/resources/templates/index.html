@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expedia | Hotel Deals
+    </title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet">
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+  </head>
+  <body class="mini-navbar">
+    <div id="page-wrapper" class="gray-bg">
+      <div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation"
+             style="margin-bottom: 0">
+          <ul class="nav navbar-top-links navbar-right">
+            <li>
+              <div class="ibox-tools">
+                <span class="badge badge-primary"
+                      th:text="'User :' + ${hotels.userInfo.userId}">
+                </span>
+              </div>
+            </li>
+            <li>
+              <div class="ibox-tools">
+                <span class="badge badge-info"
+                      th:text="'Type :' + ${hotels.userInfo.persona.personaType}">
+                </span>
+              </div>
+            </li>
+            <li>
+              <a href="#"> 
+                <i class="fa fa-sign-out">
+                </i> Log out
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="row wrapper border-bottom white-bg page-heading">
+          <div class="col-lg-9">
+            <h2>Hotels
+            </h2>
+          </div>
+        </div>
+        <div class="row wrapper border-bottom white-bg page-heading "
+             style="">
+          <form role="search" class="col-md-12" th:action="@{/}">
+            <ul style="list-style-type: none; margin: 0px; padding: 0px">
+              <li style="width: 200px; display: table-cell; padding: 1px;">
+                <input type="text" placeholder="Search Destination Name..."
+                       th:value="${param.destinationName}==null?'':${param.destinationName[0]}"
+                       class="form-control" name="destinationName" id="destinationName">
+              </li>
+              <li style="width: 150px; display: table-cell; padding: 5px;">
+                <input
+                       th:value="${param.minTripStartDate}==null?'':${param.minTripStartDate[0]}"
+                       type="text" class="form-control" data-mask="99/99/9999"
+                       placeholder="Travel Start" name="minTripStartDate"
+                       id="minTripStartDate">
+              </li>
+              <li style="width: 150px; display: table-cell; padding: 5px;">
+                <input
+                       th:value="${param.maxTripStartDate}==null?'':${param.maxTripStartDate[0]}"
+                       type="text" class="form-control" data-mask="99/99/9999"
+                       placeholder="Travel End" name="maxTripStartDate"
+                       id="maxTripStartDate">
+              </li>
+              <li style="width: 50px; display: table-cell;">
+                <button class="btn btn-primary " type="submit">
+                  <i class="fa fa-search">
+                  </i>&nbsp;&nbsp;Search
+                </button>
+              </li>
+            </ul>
+          </form>
+        </div>
+        <div class="wrapper wrapper-content animated fadeInRight">
+          <div class="row">
+            <div th:if="${hotels.offers.hotel} == null">
+              <h2 class="text-center">
+                <i class="fa fa-search">
+                </i> No Hotel Deals Found !
+              </h2>
+            </div>
+            <div class="col-md-3" th:each="hotel : ${hotels.offers.hotel}"
+                 th:if="${hotels.offers.hotel} != null">
+              <div class="ibox-content hotel-box">
+                <img class="img-responsive" alt="image"
+                     th:src="${hotel.hotelInfo.hotelImageUrl}"
+                     onerror="this.onerror=null;this.src='https://yt3.ggpht.com/-iMfCurWaCEQ/AAAAAAAAAAI/AAAAAAAAAAA/7IvI5on3E30/s900-c-k-no-mo-rj-c0xffffff/photo.jpg';">
+                <div class="hotel-desc">
+                  <span
+                        th:classappend="${hotel.hotelInfo.hotelStarRating}>=2.5 ? hotel-rating-blue : hotel-rating-yellow"
+                        th:text="${hotel.hotelInfo.hotelStarRating} + ' / 5.0'">
+                  </span> 
+                  <h3 class="text-muted"> 
+                    <a
+                       th:href="'https://www.google.com/maps/preview/@'+${hotel.hotelInfo.hotelLatitude}+','
+                                +${hotel.hotelInfo.hotelLongitude}+',15z'">
+                      <i class="fa fa-map-marker common-text"
+                         th:text="' '+ ${hotel.hotelInfo.hotelCity}">
+                      </i>
+                    </a>
+                  </h3> 
+                  <a href="#" class="hotel-name common-text"
+                     th:text="${hotel.hotelInfo.hotelName}">
+                  </a>
+                  <div class="row  m-t-sm">
+                    <div class="col-sm-6">
+                      <div class="font-bold">Travel Start
+                      </div>
+                      <div class="ibox-tools">
+                        <span class="label  label-primary pull-left"
+                              th:text="${hotel.offerDateRange.travelStartDate}">
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="font-bold">Travel End
+                      </div>
+                      <div class="ibox-tools">
+                        <span class="label label-danger pull-left"
+                              th:text="${hotel.offerDateRange.travelEndDate}">
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="small m-t-xs long-text"
+                       th:text="${hotel.hotelInfo.localizedHotelName}">
+                  </div>
+                  <div class="ibox-tools">
+                    <span class="label  pull-right"
+                          th:text="${hotel.hotelPricingInfo.currency}">
+                    </span>
+                  </div>
+                  <div class="ibox-tools">
+                    <span
+                          th:classappend="${hotel.hotelPricingInfo.originalPricePerNight}>100 ? label-warning-light : label-primary"
+                          class="label  pull-right"
+                          th:text="${hotel.hotelPricingInfo.originalPricePerNight}">
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <div>
+            <strong>Copyright
+            </strong> Expedia &copy; 2017
+          </div>
+        </div>
+      </div>
+    </div>
+    <script th:src="@{js/jquery-2.1.1.js}">
+    </script>
+    <script th:src="@{js/bootstrap.min.js}">
+    </script>
+    <script th:src="@{js/inspinia.js}">
+    </script>
+    <script th:src="@{js/plugins/pace/pace.min.js}">
+    </script>
+    <script th:src="@{js/plugins/slimscroll/jquery.slimscroll.min.js}">
+    </script>
+    <script th:src="@{js/plugins/jasny/jasny-bootstrap.min.js}">
+    </script>
+  </body>
+</html>
